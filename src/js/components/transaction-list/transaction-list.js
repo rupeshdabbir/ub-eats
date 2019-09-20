@@ -1,15 +1,15 @@
 import * as json from './transactions.json';
-
 const { list } = json;
 const transactionsBody = document.getElementsByClassName('list-body');
-
-const invoiceBody = document.getElementsByClassName('invoice-list-body');
 const showCart = $('#newInvoice');
 const showInvoiceModal = $('#newInvoiceModal');
 
+// Global States
 const cart = {};
 let GlobalStore = {};
 
+
+// Buid List.
 function buildList() {
   returnList();
 }
@@ -17,6 +17,9 @@ function buildList() {
 // eslint-disable-next-line no-use-before-define
 returnList();
 
+/* 
+ *  Helper Method to call fetch() to read the data.
+ */
 function returnList() {
   fetch('https://dtmqucifgb.execute-api.us-east-2.amazonaws.com/prod/restaurants')
     .then((res) => res.json())
@@ -26,6 +29,9 @@ function returnList() {
     });
 }
 
+/* 
+ *  Render List.
+ */
 function renderList(data) {
   GlobalStore = Object.assign({}, data);
   const { itemsMap, ingredientsMap } = data.store;

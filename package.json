@@ -1,7 +1,7 @@
 {
-  "name": "Demo-Intuit-app",
+  "name": "Demo-Uber-app",
   "version": "2.3.2",
-  "description": "Demo Project for Intuit",
+  "description": "Demo Project for Uber",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rupeshdabbir/code-demo"
