@@ -1,0 +1,63 @@
+<section class="transactions" aria-title="transactions">
+    <h1> List of Transactions </h1>
+    <button type="button" id="newInvoice" class="newInvoice btn btn-primary" data-toggle="modal" data-target="#newInvoiceModal">
+        New Invoice
+    </button>
+    <table class="transactions table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">ID#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Date</th>
+            <th scope="col">Amount</th>
+          </tr>
+        </thead>
+        <tbody class="list-body">
+        </tbody>
+      </table>
+      <!-- Button trigger modal -->
+
+  
+  <!-- Modal -->
+  <div class="newInvoiceModal modal" id="newInvoiceModal" tabindex="-1" role="dialog" aria-labelledby="newInvoiceLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Name</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form id="newInvoiceData">
+                <div class="form-group">
+                            <p for="recipient-name" class="col-form-label">Name:</p>
+                            <input type="text" name="name" class="form-control" id="recipient-name">
+                          </div>
+                <div class="form-group">
+                  <p for="recipient-name" style="float: left" class="col-form-label">Amount:</p>
+                  <span class="input-group-text" style="width: 10%; float: left">$</span>
+                  <input type="number" name="amount" style="width: 70%; float: left;" class="form-control" id="recipient-money">
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Status:</label>
+                  <label class="container">Paid
+                        <input type="radio" checked="checked" name="radio">
+                        <span class="checkmark"></span>
+                  </label>
+                  <label class="container"> Unpaid
+                        <input type="radio" checked="checked" name="radio">
+                        <span class="checkmark"></span>
+                  </label>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-close" data-dismiss="modal">Close</button>
+              <button type="button" class="save btn btn-primary btn-save">Save</button>
+            </div>
+          </div>
+        </div>
+  </div>
+</section>
