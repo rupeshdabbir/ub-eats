@@ -63,6 +63,8 @@ function renderList(data) {
     const ingredientsNode = document.createElement('td');
     ingredientsNode.innerText = ingredientsMapping;
 
+    const buttonTD = document.createElement('td');
+
     const addCartButton = document.createElement('button');
     addCartButton.classList.add('addCart');
     addCartButton.classList.add('btn');
@@ -70,12 +72,15 @@ function renderList(data) {
     addCartButton.innerHTML = 'Add Item';
     addCartButton.uuid = uuid;
 
+    buttonTD.appendChild(addCartButton);
+
     tr.appendChild(imgNode);
     tr.appendChild(titleNode);
     tr.appendChild(descNode);
     tr.appendChild(priceNode);
     tr.appendChild(ingredientsNode);
-    tr.appendChild(addCartButton);
+    // tr.appendChild(addCartButton);
+    tr.appendChild(buttonTD);
 
     transactionsBody[0].appendChild(tr);
   });
@@ -160,6 +165,8 @@ $('.btn-save').click(function(e) {
     postData['items'] = [];
     postData['items'] = [...postData['items'], cartValues];
 
+    console.log("Before Sending", postData);
+
     fetch('https://dtmqucifgb.execute-api.us-east-2.amazonaws.com/prod/orders', {
         method: 'post',
         body: JSON.stringify(cartValues)
@@ -167,6 +174,7 @@ $('.btn-save').click(function(e) {
         return response.json();
       }).then(function(data) {
         console.log("Success");
+        showInvoiceModal.toggle();
       });
 });
 
