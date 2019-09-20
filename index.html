@@ -21,10 +21,10 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="#">My Transactions <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="#">Items <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">New Invoice</a>
+            <a class="nav-link" href="#">Cart</a>
           </li>
           <!-- <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -48,18 +48,19 @@
       <div class="row">
         <div class="col">
           <section class="transactions" aria-title="transactions">
-              <h1> List of Transactions </h1>
+              <h1> Items List: </h1>
               <button type="button" id="newInvoice" class="newInvoice btn btn-primary" data-toggle="modal" data-target="#newInvoiceModal">
-                  New Invoice
+                  View Cart
               </button>
               <table class="transactions table">
                   <thead class="thead-dark">
                     <tr>
-                      <th scope="col">ID#</th>
+                      <th scope="col">Image#</th>
                       <th scope="col">Name</th>
                       <th scope="col">Description</th>
-                      <th scope="col">Date</th>
-                      <th scope="col">Amount</th>
+                      <th scope="col">Price</th>
+                      <th scope="col">Ingredients</th>
+                      <th scope="col">.</th>
                     </tr>
                   </thead>
                   <tbody class="list-body">
@@ -80,7 +81,7 @@
                       </div>
                       <div class="modal-body">
                         <form id="newInvoiceData">
-                          <div class="form-group">
+                          <!-- <div class="form-group">
                                       <p for="recipient-name" class="col-form-label">Name:</p>
                                       <input type="text" name="name" class="form-control" id="recipient-name">
                                     </div>
@@ -99,12 +100,25 @@
                                   <input type="radio" checked="checked" name="radio">
                                   <span class="checkmark"></span>
                             </label>
-                          </div>
+                          </div> -->
+                          <table class="invoice table">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Tax</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Quantity</th>
+                              </tr>
+                            </thead>
+                            <tbody class="checkout-list-body">
+                            </tbody>
+                          </table>
                         </form>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary btn-close" data-dismiss="modal">Close</button>
-                        <button type="button" class="save btn btn-primary btn-save">Save</button>
+                        <button type="button" class="save btn btn-primary btn-save">Checkout</button>
                       </div>
                     </div>
                   </div>
@@ -112,7 +126,7 @@
           </section>
         </div>
       </div>
-      <div class="row">
+      <!-- <div class="row">
         <div class="col">
             <section class=" transactions invoices" aria-title="invoices">
                     <h1> List of Invoices in last 30 days</h1>
@@ -131,7 +145,7 @@
             </section>
 
         </div>
-      </div>
+      </div> -->
     </div>
 
     

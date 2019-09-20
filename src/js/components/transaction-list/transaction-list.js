@@ -1,206 +1,173 @@
 import * as json from './transactions.json';
 
-const {list} = json;
+const { list } = json;
 const transactionsBody = document.getElementsByClassName('list-body');
+
 const invoiceBody = document.getElementsByClassName('invoice-list-body');
-const showInvoice = $('#newInvoice');
+const showCart = $('#newInvoice');
 const showInvoiceModal = $('#newInvoiceModal');
-const form = $('#newInvoiceData');
-let store = {};
 
+const cart = {};
+let GlobalStore = {};
 
-showInvoice.click(function() {
+function buildList() {
+  returnList();
+}
+
+// eslint-disable-next-line no-use-before-define
+returnList();
+
+function returnList() {
+  fetch('https://dtmqucifgb.execute-api.us-east-2.amazonaws.com/prod/restaurants')
+    .then((res) => res.json())
+    .then((val) => {
+      console.log(val);
+      renderList(val);
+    });
+}
+
+function renderList(data) {
+  GlobalStore = Object.assign({}, data);
+  const { itemsMap, ingredientsMap } = data.store;
+
+  const itemsArr = Object.values(itemsMap);
+
+  itemsArr.forEach((each) => {
+    const {
+      imageUrl, title, itemDescription, price, ingredients, uuid
+    } = each;
+    const ingredientsMapping = [];
+    ingredients.forEach((eachIng) => {
+      if (ingredientsMap[eachIng]) {
+        ingredientsMapping.push(ingredientsMap[eachIng]);
+      }
+    });
+
+    const tr = document.createElement('tr');
+    // const th = document.createElement('th');
+
+    const imgNode = document.createElement('img');
+    imgNode.src = imageUrl;
+    imgNode.height = 100;
+    imgNode.width = 100;
+
+    const titleNode = document.createElement('td');
+    titleNode.innerText = title;
+
+    const descNode = document.createElement('td');
+    descNode.innerText = itemDescription;
+
+    const priceNode = document.createElement('td');
+    priceNode.innerText = price;
+
+    const ingredientsNode = document.createElement('td');
+    ingredientsNode.innerText = ingredientsMapping;
+
+    const addCartButton = document.createElement('button');
+    addCartButton.classList.add('addCart');
+    addCartButton.classList.add('btn');
+    addCartButton.classList.add('btn-primary');
+    addCartButton.innerHTML = 'Add Item';
+    addCartButton.uuid = uuid;
+
+    tr.appendChild(imgNode);
+    tr.appendChild(titleNode);
+    tr.appendChild(descNode);
+    tr.appendChild(priceNode);
+    tr.appendChild(ingredientsNode);
+    tr.appendChild(addCartButton);
+
+    transactionsBody[0].appendChild(tr);
+  });
+
+  $('.addCart').click(addToCart);
+
+showCart.click(function() {
     showInvoiceModal.show();
+    showInvoiceData();
 })
 
 $('.btn-close').click(function() {
     showInvoiceModal.toggle();
 })
 
+function showInvoiceData() {
+    const transactionsBody = document.getElementsByClassName('checkout-list-body');
+    
+    console.log("Cart", cart);
+    const values = Object.values(cart);
+    const storeMap = GlobalStore.store.itemsMap;
+    let total = 0;
+
+    values.forEach(eachItem => {
+        const {uuid, quantity} = eachItem;
+        const {title, price, taxRate} = storeMap[uuid];
+
+        console.log("Qualitity", quantity);
+
+        const tr = document.createElement('tr');
+
+        const titleNode = document.createElement('td');
+        titleNode.innerText = title;
+
+        const priceNode = document.createElement('td');
+        priceNode.innerText = price;
+
+        const taxNode = document.createElement('td');
+        taxNode.innerText = taxRate;
+
+        const totalNode = document.createElement('td');
+        totalNode.innerText = Number(price)+ Number(taxRate);
+        total += Number(price)+ Number(taxRate);
+
+        const quantityNode = document.createElement('td');
+        quantityNode.innerText = Number(quantity);
+
+        tr.appendChild(titleNode);
+        tr.appendChild(priceNode);
+        tr.appendChild(taxNode);
+        tr.appendChild(totalNode);
+        tr.appendChild(quantityNode);
+
+        transactionsBody[0].appendChild(tr);
+
+    });
+
+    const grandTotal = document.createElement('div');
+    grandTotal.innerText = `Your Grand Total: ${total}`;
+
+    transactionsBody[0].appendChild(grandTotal);
+}
+
+  function addToCart(e) {
+    console.log("E", e);
+    const { uuid } = e.currentTarget;
+    if(!cart[uuid]) {
+        cart[uuid] = {};
+        cart[uuid]['quantity'] = 1;
+        cart[uuid]['uuid'] = uuid;
+    } else {
+        cart[uuid]['quantity']++;
+    }
+
+    console.log('cart', cart);
+  }
+}
 
 $('.btn-save').click(function(e) {
-        var elements = document.getElementById("newInvoiceData").elements;
-        var obj ={};
-        for(var i = 0 ; i < elements.length ; i++){
-            var item = elements.item(i);
-            obj[item.name] = item.value;
-        }
-    
-        console.log("Form", obj); // {name: "Rupesh", amount: "10", radio: "on"}
-        storeDataAndRender(obj);
+    const cartValues = Object.values(cart);
+    const postData = {};
+    postData['items'] = [];
+    postData['items'] = [...postData['items'], cartValues];
+
+    fetch('https://dtmqucifgb.execute-api.us-east-2.amazonaws.com/prod/orders', {
+        method: 'post',
+        body: JSON.stringify(cartValues)
+      }).then(function(response) {
+        return response.json();
+      }).then(function(data) {
+        console.log("Success");
+      });
 });
 
-function storeDataAndRender(obj) {
-    if(!store['invoices']) {
-        store['invoices'] = [];
-    }
-    store['invoices'].push(obj);
-    renderInvoices();
-}
-
-function renderInvoices() {
-    $('.invoice-list-body').empty();
-    const list = store['invoices'];
-    list.forEach((each, i) => {
-        let id = i+1;
-        const { name, radio, amount } = each;
-
-        const tr = document.createElement('tr');
-        const th = document.createElement('th');
-
-        const nameNode = document.createElement('td');
-        nameNode.innerText = name;
-
-        const amountNode = document.createElement('td');
-        amountNode.innerText = amount;
-
-        const statusNode = document.createElement('td');
-        const status = radio === 'on' ? 'Paid':'unpaid';
-        statusNode.innerText = status;
-
-        th.scope = 'row';
-        th.innerText = id;
-        tr.appendChild(th);
-        tr.appendChild(nameNode);
-        tr.appendChild(amountNode);
-        tr.appendChild(statusNode);
-
-        // debugger;
-        invoiceBody[0].appendChild(tr);
-    });
-    showInvoiceModal.toggle();
-}
-
-function buildList() {
-    list.forEach(each => {
-        const {id, name, description, date, amount } = each;
-
-        const tr = document.createElement('tr');
-        const th = document.createElement('th');
-
-        const nameNode = document.createElement('td');
-        nameNode.innerText = name;
-
-        const descNode = document.createElement('td');
-        descNode.innerText = description;
-
-        const dateNode = document.createElement('td');
-        dateNode.innerText = date;
-
-        const amountNode = document.createElement('td');
-        amountNode.innerText = amount;
-
-        th.scope = 'row';
-        th.innerText = id;
-        tr.appendChild(th);
-        tr.appendChild(nameNode);
-        tr.appendChild(descNode);
-        tr.appendChild(dateNode);
-        tr.appendChild(amountNode);
-
-        // debugger;
-        transactionsBody[0].appendChild(tr);
-    });
-
-}
-
-buildList();
-
-const returnList = () => {
-    fetch('https://api.jikan.moe/v3/anime/1')
-    .then(res => res.json())
-    .then(val => console.log(val));
-}
-
-
-
-// Client
-function mockDataService (url) {
-    client2(url)
-        .then(function(res) {
-            filterData(res);
-    }).catch(err => console.log("error", err));
-};
-
-// {id_response: 1 , item: 'ipad', price: 300 }
-function filterData(res) {
-    const {id_response} = res;
-
-    const filteredRes = store['list'].filter(each => {
-        const {id} = each;
-
-        return id === id_response;
-    }); 
-    /*
-        [{
-            id: 1,
-            name: 'Rupesh',
-            description: 'Transaction for iPad',
-            date: 'Thu Aug 29 2019 12:46:57 GMT-0700 (Pacific Daylight Time)',
-            amount: '$300',
-            status: 'unpaid'
-        }]
-    */
-   renderInvoicesList(filteredRes);
-}
-
-
-// components/invoice.js
-function renderInvoicesList(data) {
-    data.forEach(each => {
-        const {id, name, description, amount, status} = each;
-
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-    });
-}
-
-
-function fetchFactoryData(url) {
-    return fetch(url)
-        .then(res => res.json())
-        .then(result => {
-            // success
-        }).catch((err) => {
-            console.error("Exception", err);
-        })
-}
-
-function unhandledExceptionHandler() {
-
-}
-
-function demo(url) {
-    // does something.
-    return new Promise(function(resolve, reject) => {
-        setTimeout(function() {
-            reject("Exception");
-        }, 1000);
-    });
-}
-
-function retryPromise(fn, limit=3, args) {
-    return new Promise((resolve, reject) => {
-        fn(...args).then(function(res){
-            // Hurray!
-            resolve(res);
-        }).catch(e => {
-            if(limit === 0) reject("error")
-            retryPromise(fn, limit-1, args);
-        });
-    });
-}
-
-// Caller
-const client = new retryPromise(demo, 3, ['http://google.com');
-client.then( res => console.log(res))
-      .catch(e => console.error("errr", e));
-
-// Caller for fn
-
-
-const client2 = new retryPromise(fetchFactoryData, 3, ['http://google.com']);
-client2.then( res => console.log(res))
-        .catch(e => console.error('err', e));
-
-export default returnList;
+// export default returnList;
